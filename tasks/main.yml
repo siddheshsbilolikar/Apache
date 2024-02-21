@@ -1,0 +1,30 @@
+---
+  - name: apache
+    hosts: web
+    become: true
+    tasks:
+      - name: apache server installation
+        yum:
+          name: httpd
+          state: latest
+      - name: starting server
+        service:
+          name: httpd
+          state: started
+      - name: setting up apache server
+        template:
+          src: /root/index.j2
+          dest: /var/www/html/index.html
+      - name: firewalld
+        firewalld:
+          service: http
+          permanent: yes
+          state: enabled
+      - name: httpd restarting
+        service:
+           name: httpd
+           state: restarted 
+      - name: reload firewall service
+        service:
+          name: firewalld
+          state: reloaded     
